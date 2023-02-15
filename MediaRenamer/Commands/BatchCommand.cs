@@ -1,4 +1,5 @@
-﻿using MediaRenamer.Services;
+﻿using MediaRenamer.Media.Models;
+using MediaRenamer.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -36,12 +37,12 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
 
         foreach (var media in medias)
         {
-            if (media.Data.Type == Models.Medias.MediaType.Tv)
+            if (media.Data.Type == MediaType.Tv)
             {
                 var result = await _mediaService.SearchTvAsync(media);
                 var test = "";
             }
-            else if (media.Data.Type == Models.Medias.MediaType.Movie)
+            else if (media.Data.Type == MediaType.Movie)
             {
                 var result = await _mediaService.SearchMovieAsync(media);
                 var test = "";
