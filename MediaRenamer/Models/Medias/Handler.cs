@@ -26,7 +26,9 @@ public class MediaHandlerBuilder<TProperty>
                 if(!string.IsNullOrWhiteSpace(value))
                     return new MediaHandler(value, match.Index, property);
 
-                var matchValue = match.Value?.Trim() ?? string.Empty;
+                var rawMatch = match.Value?.Trim() ?? string.Empty;
+                var cleanMatch = match.Groups[1]?.Value?.Trim();
+                var matchValue = cleanMatch ?? rawMatch;
 
                 if (lowercase)
                     matchValue = matchValue.ToLowerInvariant();

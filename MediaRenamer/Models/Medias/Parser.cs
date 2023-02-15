@@ -49,13 +49,11 @@ public class MediaParser
     {
         var cleanedTitle = rawTitle;
 
-        if (cleanedTitle.IndexOf(" ") == -1 && cleanedTitle.IndexOf(".") != -1)
-        {
+        if (!cleanedTitle.Contains(' ', StringComparison.CurrentCulture) && cleanedTitle.IndexOf(".") != -1)
             cleanedTitle = cleanedTitle.Replace(".", " ");
-        }
 
         cleanedTitle = cleanedTitle.Replace("_", " ");
-        cleanedTitle = cleanedTitle.Replace("([(_]|- )$", "").Trim();
+        cleanedTitle = Regex.Replace(cleanedTitle, "([(_]|- )$", "").Trim();
 
         return cleanedTitle;
     }
@@ -101,7 +99,7 @@ public class MediaParser
         MediaHandler.To(r => r.Container).FromRegex(new Regex(@"\b(MKV|AVI|MP4)\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
 
         // Source
-        MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\b(?:HD-?)?CAM\b", RegexOptions.Singleline), lowercase: true),
+        MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\b(?:HD-?)?CAM(?:RIP)?\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
         MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\b(?:HD-?)?T(?:ELE)?S(?:YNC)?\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), value: "telesync"),
         MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\bHD-?Rip\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
         MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\bBRRip\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
@@ -115,11 +113,11 @@ public class MediaParser
         MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\bR5\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
         MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\bVHSSCR\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
         MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\bBluray\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
-        MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\bWEB-?DL\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
+        MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\b(?:PPV )?WEB-?DL\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
         MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\bWEB-?Rip\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
         MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\b(?:DL|WEB|BD|BR)MUX\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
         MediaHandler.To(r => r.Source).FromRegex(new Regex(@"\b(DivX|XviD)\b", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
-        MediaHandler.To(r => r.Source).FromRegex(new Regex(@"HDTV", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
+        MediaHandler.To(r => r.Source).FromRegex(new Regex(@"(?:PPV\.)?HDTV", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
 
         // Codec
         MediaHandler.To(r => r.Codec).FromRegex(new Regex(@"dvix|mpeg2|divx|xvid|[xh][-. ]?26[45]|avc|hevc", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true),
@@ -191,5 +189,5 @@ public class MediaParserResult
     public int? Episode { get; set; }
     public string? Language { get; set; }
     public MediaType Type
-        => Episode != null ? MediaType.Serie : MediaType.Movie;
+        => Episode != null ? MediaType.Tv : MediaType.Movie;
 }

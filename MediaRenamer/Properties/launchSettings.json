@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "MediaRenamer": {
+      "commandName": "Project",
+      "commandLineArgs": "batch",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

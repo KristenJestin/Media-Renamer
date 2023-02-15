@@ -1,33 +1,59 @@
-﻿using MediaRenamer;
+﻿using Flurl.Http;
+using Flurl.Http.Configuration;
+using MediaRenamer.Commands;
+using MediaRenamer.Common.Infrastructure;
 using MediaRenamer.Models;
+using MediaRenamer.Services;
+using MediaRenamer.TMDb.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using Spectre.Console.Cli;
 using System.Reflection;
 
 var dir = new DirectoryInfo(@"C:\Users\krisj\Downloads\test");
+var assembly = Assembly.GetEntryAssembly()!;
 
-AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+// Create a type registrar and register any dependencies.
+// A type registrar is an adapter for a DI framework.
+var services = new ServiceCollection();
 
-var currentLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
-using IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureAppConfiguration(c => c.SetBasePath(currentLocation))
-    .ConfigureServices((context, services) =>
+// Configuration
+var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+var configurationBuilder = new ConfigurationBuilder()
+        .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true)
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddEnvironmentVariables()
+        .AddUserSecrets(assembly);
+var configuration = configurationBuilder.Build();
+
+var secrets = configuration.GetSection(nameof(AppSecrets));
+services.Configure<AppConfig>(configuration.GetSection(nameof(AppConfig)));
+services.Configure<AppSecrets>(secrets);
+
+// Singletons
+services.AddSingleton(new TMDbClient(secrets.Get<AppSecrets>()?.ApiKeyTmdb ?? throw new Exception("You should provide an api key in the secrets")));
+services.AddSingleton<FileService>();
+services.AddSingleton<MediaDataService>();
+
+// Flurl
+FlurlHttp.Configure(settings => {
+    var jsonSettings = new JsonSerializerSettings
     {
-        // App Host
-        services.AddHostedService<ApplicationHostService>();
+        ObjectCreationHandling = ObjectCreationHandling.Replace
+    };
+    settings.JsonSerializer = new NewtonsoftJsonSerializer(jsonSettings);
+});
 
-        // Configuration
-        services.Configure<AppConfig>(context.Configuration.GetSection(nameof(AppConfig)));
-    })
-    .Build();
+// DI
+var registrar = new TypeRegistrar(services);
 
-await host.RunAsync();
-
-static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+// Create a new command app with the registrar
+// and run it with the provided arguments.
+var app = new CommandApp(registrar);
+app.Configure(config =>
 {
-    Console.WriteLine(e.ExceptionObject.ToString());
-    Console.WriteLine("Press Enter to continue");
-    Console.ReadLine();
-    Environment.Exit(1);
-}
+    config.AddCommand<BatchCommand>("batch");
+});
+
+return await app.RunAsync(args);
