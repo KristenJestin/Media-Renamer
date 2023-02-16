@@ -2,9 +2,9 @@
   "profiles": {
     "MediaRenamer": {
       "commandName": "Project",
-      "commandLineArgs": "batch",
+      "commandLineArgs": "batch C:\\Users\\krisj\\Downloads\\test",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ENVIRONMENT": "Development"
       }
     }
   }

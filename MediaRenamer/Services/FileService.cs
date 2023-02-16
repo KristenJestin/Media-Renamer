@@ -9,8 +9,6 @@ namespace MediaRenamer.Services;
 
 public class FileService
 {
-	private readonly IEnumerable<string> _masks = new List<string> { "mkv", "ogv", "avi", "wmv", "asf", "mp4", "m4p", "m4v", "mpeg", "mpg", "mpe", "mpv", "mpg", "m2v" };
-
 	private readonly AppConfig _config;
 
 	public FileService(IOptions<AppConfig> config)
@@ -18,11 +16,11 @@ public class FileService
 		_config = config.Value;
 	}
 
-	public IEnumerable<MediaData> GetMediaFilesFromSource()
+	public IEnumerable<MediaData> GetMediaFilesFromSource(DirectoryInfo directory)
 	{
-		var files = _config.Directory
-			.EnumerateFiles("*.*", _config.OnlyTopDirectory ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories)
-			.Where(file => _masks.Contains(file.Extension[1..]));
+		var files = directory
+            .EnumerateFiles("*.*", _config.OnlyTopDirectory ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories)
+			.Where(file => _config.GetMask().Contains(file.Extension));
 
 		return files.Select(MediaData.Create);
 	}

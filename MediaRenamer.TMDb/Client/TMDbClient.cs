@@ -13,9 +13,10 @@ namespace MediaRenamer.TMDb.Client
         private const string ImageUrl = "https://image.tmdb.org/t/p/";
         private readonly Uri Url = new Uri(string.Format("{0}://{1}/{2}/", "https", ProductionUrl, ApiVersion));
 
-        public TMDbClient(string apiKey)
+        public TMDbClient(string apiKey, string? language = null)
         {
             ApiKey = apiKey;
+            DefaultLanguage = language;
         }
 
         public string ApiKey { get; private set; }

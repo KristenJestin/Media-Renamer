@@ -3,6 +3,7 @@ using MediaRenamer.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
+using System.Xml.Linq;
 
 namespace MediaRenamer.Commands;
 
@@ -22,17 +23,26 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
 
     public sealed class Settings : CommandSettings
     {
-        [CommandOption("-n|--name <NAME>")]
-        [Description("The person or thing to greet.")]
-        [DefaultValue("World")]
-        public string Name { get; set; }
+        [Description("Media file file path to process")]
+        [CommandArgument(0, "<SOURCE>")]        
+        public string SourcePath { get; set; }
+
+
+        public override ValidationResult Validate()
+        {
+            if (!Directory.Exists(SourcePath))
+                return ValidationResult.Error("You must provide an existing source path.");
+            return ValidationResult.Success();
+        }
     }
 
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+        var source = new DirectoryInfo(settings.SourcePath);
+
         var medias = AnsiConsole.Status()
-            .Start("Retriving files...", ctx => _fileService.GetMediaFilesFromSource());
+            .Start("Retriving files...", ctx => _fileService.GetMediaFilesFromSource(source));
         _console.MarkupLine($"[cyan]{medias.Count()} files founded[/]");
 
         foreach (var media in medias)
