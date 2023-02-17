@@ -1,20 +1,30 @@
-﻿using System.IO;
+﻿using System;
 
 namespace MediaRenamer.Media.Models
 {
     public class MediaData
     {
-        public FileInfo File { get; }
-        public MediaParserResult Data { get; }
+        public string Title { get; private set; }
+        public DateTime? ReleaseDate { get; private set; }
+        public string? EpisodeTitle { get; private set; }
+        public int? Season { get; private set; }
+        public int? Episode { get; private set; }
 
-        public MediaData(FileInfo file)
+        public MediaData(string title, DateTime? releaseDate)
         {
-            File = file;
-            var name = file.Name;
-            Data = MediaParser.Default.Parse(name);
+            Title = title;
+            ReleaseDate = releaseDate;
         }
 
-        public static MediaData Create(FileInfo file)
-            => new MediaData(file);
+
+        #region methods
+        public MediaData WithTvInfos(string episodeTitle, int season, int episode)
+        {
+            EpisodeTitle = episodeTitle;
+            Season = season;
+            Episode = episode;
+            return this;
+        }
+        #endregion
     }
 }

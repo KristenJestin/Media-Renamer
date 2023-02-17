@@ -6,6 +6,7 @@ using MediaRenamer.Common.Infrastructure;
 using MediaRenamer.Models;
 using MediaRenamer.Services;
 using MediaRenamer.TMDb.Client;
+using MediaRenamer.TvMaze.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -22,9 +23,10 @@ var services = new ServiceCollection();
 
 // Configuration
 var environmentName = Environment.GetEnvironmentVariable("ENVIRONMENT");
-var configurationBuilder = new ConfigurationBuilder()
-        .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true)
-        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+var configurationBuilder = new ConfigurationBuilder();
+if (!string.IsNullOrWhiteSpace(environmentName))
+    configurationBuilder.AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true);
+configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .AddEnvironmentVariables()
         .AddUserSecrets(assembly);
 var configuration = configurationBuilder.Build();
@@ -36,6 +38,8 @@ var secretsValue = secrets.Get<AppSecrets>();
 
 services.Configure<AppConfig>(appConfig);
 services.Configure<AppSecrets>(secrets);
+
+Console.WriteLine(appConfigValue.MovieDestinationPath);
 
 // validation
 if (appConfigValue == null)
@@ -52,8 +56,9 @@ if (!secretsValue.TryValidate(out var errorsSecrets))
 
 // Singletons
 services.AddSingleton(new TMDbClient(secretsValue.ApiKeyTMDb, language: appConfigValue.Langugage));
+services.AddSingleton(new TvMazeClient());
 services.AddSingleton<FileService>();
-services.AddSingleton<MediaDataService>();
+services.AddSingleton<MediaService>();
 
 // Flurl
 FlurlHttp.Configure(settings =>

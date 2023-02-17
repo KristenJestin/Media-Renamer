@@ -2,7 +2,7 @@
   "profiles": {
     "MediaRenamer": {
       "commandName": "Project",
-      "commandLineArgs": "batch C:\\Users\\krisj\\Downloads\\test",
+      "commandLineArgs": "batch --debug=false C:\\Users\\krisj\\Downloads\\test",
       "environmentVariables": {
         "ENVIRONMENT": "Development"
       }

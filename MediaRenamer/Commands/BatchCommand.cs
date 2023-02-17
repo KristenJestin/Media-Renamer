@@ -1,8 +1,14 @@
-﻿using MediaRenamer.Media.Models;
+﻿using Humanizer;
+using MediaRenamer.Common.Exceptions;
+using MediaRenamer.Media.Models;
+using MediaRenamer.Models;
 using MediaRenamer.Services;
+using Microsoft.Extensions.Options;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace MediaRenamer.Commands;
@@ -10,12 +16,14 @@ namespace MediaRenamer.Commands;
 public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
 {
     //private readonly ILogger<HelloCommand> _logger;
+    private readonly AppConfig _config;
     private readonly IAnsiConsole _console;
     private readonly FileService _fileService;
-    private readonly MediaDataService _mediaService;
+    private readonly MediaService _mediaService;
 
-    public BatchCommand(IAnsiConsole console/*, ILogger<HelloCommand> logger*/, FileService fileService, MediaDataService mediaService)
+    public BatchCommand(IOptions<AppConfig> config, IAnsiConsole console/*, ILogger<HelloCommand> logger*/, FileService fileService, MediaService mediaService)
     {
+        _config = config.Value;
         _console = console;
         _fileService = fileService;
         _mediaService = mediaService;
@@ -24,8 +32,12 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
     public sealed class Settings : CommandSettings
     {
         [Description("Media file file path to process")]
-        [CommandArgument(0, "<SOURCE>")]        
+        [CommandArgument(0, "<SOURCE>")]
         public string SourcePath { get; set; }
+
+        [CommandOption("--debug")]
+        public bool? Debug { get; set; }
+
 
 
         public override ValidationResult Validate()
@@ -43,20 +55,53 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
 
         var medias = AnsiConsole.Status()
             .Start("Retriving files...", ctx => _fileService.GetMediaFilesFromSource(source));
-        _console.MarkupLine($"[cyan]{medias.Count()} files founded[/]");
+        _console.MarkupLine($"[italic cyan]{medias.Count()} files founded[/]");
+        _console.WriteLine();
 
         foreach (var media in medias)
         {
-            if (media.Data.Type == MediaType.Tv)
+            _console.MarkupLine($"[cyan]Searching for {Markup.Escape(media.File.Name.Truncate(40, "..."))}[/]");
+
+            media.SetData(await _mediaService.SearchTvMovieAsync(media));
+            if (media.Data == null)
             {
-                var result = await _mediaService.SearchTvAsync(media);
-                var test = "";
+                _console.MarkupLine($"[italic red] == No match found ({Markup.Escape(media.ExtractedData.Title)}) [/]");
+                _console.WriteLine();
+                continue;
             }
-            else if (media.Data.Type == MediaType.Movie)
-            {
-                var result = await _mediaService.SearchMovieAsync(media);
-                var test = "";
-            }
+
+            // build name
+            var moving = _fileService.BuildMovingMedia(media);
+
+            // move
+            await AnsiConsole.Progress()
+                .AutoClear(true)   // Hide tasks as they are completed
+                .Columns(new ProgressColumn[]
+                {
+                    new TaskDescriptionColumn(),    // Task description
+                    new ProgressBarColumn(),        // Progress bar
+                    new PercentageColumn(),         // Percentage
+                    new RemainingTimeColumn(),      // Remaining time
+                    new SpinnerColumn(),            // Spinner
+                })
+                .StartAsync(async ctx =>
+                {
+                    var task = ctx.AddTask($"[green]moving {Markup.Escape(moving.FileName)}[/]");
+                    try
+                    {
+                        if (settings.Debug != true)
+                            await _fileService.CopyFileAsync(media.File, moving, onProgressChanged: (progress, _) => task.Value = progress, overwrite: _config.Overwrite);
+                        _console.MarkupLine($"[bold green] == Moved has '{Markup.Escape(moving.FileName.Truncate(40, "..."))}'[/]");
+                        if (settings.Debug != true)
+                            media.File.Delete();
+                    }
+                    catch (FileExistsException file)
+                    {
+                        _console.MarkupLine($"[red]Media '{Markup.Escape(file.FileName ?? "")}' cannot be moved because it already exists[/]");
+                    }
+
+                    _console.WriteLine();
+                });
         }
 
         return 0;

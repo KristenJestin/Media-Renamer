@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaRenamer.Media", "Media
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{2CBEA677-E33B-4C53-9D48-7EBA9BE089F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaRenamer.Common", "MediaRenamer.Common\MediaRenamer.Common.csproj", "{69C4A4B3-EC0B-4798-BB8C-8C71E4A67DC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaRenamer.Common", "MediaRenamer.Common\MediaRenamer.Common.csproj", "{69C4A4B3-EC0B-4798-BB8C-8C71E4A67DC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaRenamer.TvMaze", "MediaRenamer.TvMaze\MediaRenamer.TvMaze.csproj", "{5939E013-48ED-4A21-82DE-26B68238F36E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{69C4A4B3-EC0B-4798-BB8C-8C71E4A67DC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69C4A4B3-EC0B-4798-BB8C-8C71E4A67DC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69C4A4B3-EC0B-4798-BB8C-8C71E4A67DC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5939E013-48ED-4A21-82DE-26B68238F36E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5939E013-48ED-4A21-82DE-26B68238F36E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5939E013-48ED-4A21-82DE-26B68238F36E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5939E013-48ED-4A21-82DE-26B68238F36E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +60,7 @@ Global
 		{FD9F75E7-B1DA-4A4B-A12E-531ECFAFF55A} = {005E2FB7-3A58-433E-A07C-1883FD48BC52}
 		{54955C4E-9552-4F2E-AE55-68D6F7CA3FFC} = {005E2FB7-3A58-433E-A07C-1883FD48BC52}
 		{69C4A4B3-EC0B-4798-BB8C-8C71E4A67DC8} = {2CBEA677-E33B-4C53-9D48-7EBA9BE089F2}
+		{5939E013-48ED-4A21-82DE-26B68238F36E} = {005E2FB7-3A58-433E-A07C-1883FD48BC52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {83FD14FD-7E72-49BD-A1E0-84F09B324220}

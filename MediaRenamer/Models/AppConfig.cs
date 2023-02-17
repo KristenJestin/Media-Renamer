@@ -14,7 +14,28 @@ public class AppConfig
     public string? Langugage { get; set; }
     public IEnumerable<string> DefaultMask { get; private set; } = new[] { ".avi", ".m4v", ".mp4", ".mkv", ".ts", ".wmv", ".srt", ".idx", ".sub", ".webm", ".png", ".jpg", ".jpeg" };
     public IEnumerable<string> Mask { get; set; } = Enumerable.Empty<string>();
+    public Dictionary<string, string> Replacements = new()
+    {
+        { "&", "and" },
+        { ";", "," },
+        { "@", "at" },
+        { "*", "x" },
+        { "\"", "`" },
+        { "'", "`" },
+        { "\\", "_" },
+        { "#", "" },
+        { "?", "" },
+        { "<", "" },
+        { ">", "" },
+        { ":", " - " },
+        { "|", "." },
+    };
 
+    private DirectoryInfo? _movieDestination;
+    public DirectoryInfo MovieDestination => _movieDestination ??= new(MovieDestinationPath);
+
+    private DirectoryInfo? _tvDestination;
+    public DirectoryInfo TvDestination => _tvDestination ??= new(TvDestinationPath);
 
     #region methods
     public bool TryValidate(out IEnumerable<ValidationFailure> errors)
