@@ -25,7 +25,7 @@ namespace MediaRenamer.Media.Models
 
             foreach (var handler in Handlers)
             {
-                var handlerResult = handler(title, result);
+                var handlerResult = handler(value, result);
                 if (handlerResult != null && handlerResult.Any())
                 {
                     foreach (var item in handlerResult)
@@ -37,12 +37,16 @@ namespace MediaRenamer.Media.Models
                             endOfTitle = item.Index.Value;
 
                         if (!string.IsNullOrEmpty(item.RawValue))
+                        {
                             title = title.Replace(item.RawValue, "");
+                            if (!item.ReduceEndOfTitleOffset)
+                                value = value.Replace(item.RawValue, "");
+                        }
 
                         var t = Nullable.GetUnderlyingType(item.Property.PropertyType) ?? item.Property.PropertyType;
                         try
                         {
-                            if (item.Value != null && item.Property.GetValue(result) == null)
+                            if (item.Value != null && (item.ReplaceIfAlreadySet || item.Property.GetValue(result) == null))
                                 item.Property?.SetValue(result, Convert.ChangeType(item.Value, t), null);
                         }
                         catch { }
@@ -78,7 +82,7 @@ namespace MediaRenamer.Media.Models
         #region statics
         public static readonly MediaParser Default = new MediaParser(new[] {
         // Year
-        MediaHandlerResult.To(r => r.Year).FromRegex(new Regex(@"(?!^)((?:19[0-9]|20[012])[0-9])", RegexOptions.IgnoreCase | RegexOptions.Singleline)),
+        MediaHandlerResult.To(r => r.Year).FromRegex(new Regex(@"(?!^)((?:19[0-9]|20[012])[0-9])", RegexOptions.IgnoreCase | RegexOptions.Singleline), replaceIfAlreadySet: true),
 
         // Website
         MediaHandlerResult.To(r => r.Website).FromRegex(new Regex(@"^(\[ ?([^\]]+?) ?\])", RegexOptions.IgnoreCase | RegexOptions.Singleline), lowercase: true, reduceEndOfTitleOffset: false),

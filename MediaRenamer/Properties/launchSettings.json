@@ -2,7 +2,7 @@
   "profiles": {
     "MediaRenamer": {
       "commandName": "Project",
-      "commandLineArgs": "extract-infos \"[sekkusu&ok] ONE PUNCH MAN S2 - 01 VOSTFR-VF [Multi-Audio] [1080p]\"",
+      "commandLineArgs": "extract-infos \"Wonder.Woman.1984.(2020).MULTi.VFF.IMAX.4KLight.HDR.WEB.HEVC-BATGirl\"",
       "environmentVariables": {
         "ENVIRONMENT": "Development"
       }

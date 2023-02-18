@@ -17,7 +17,7 @@ namespace MediaRenamer.Media.Models
             Destination = destination;
         }
 
-        public Func<string, MediaParserResult, IEnumerable<MediaHandlerResult>> FromRegex(Regex regex, bool lowercase = false, string? value = null, bool reduceEndOfTitleOffset = true)
+        public Func<string, MediaParserResult, IEnumerable<MediaHandlerResult>> FromRegex(Regex regex, bool lowercase = false, string? value = null, bool reduceEndOfTitleOffset = true, bool replaceIfAlreadySet = false)
             => (name, _) =>
             {
                 var results = new List<MediaHandlerResult>();
@@ -32,18 +32,18 @@ namespace MediaRenamer.Media.Models
 
                         if (!string.IsNullOrWhiteSpace(value))
                         {
-                            results.Add(new MediaHandlerResult(value, match.Index, property, rawValue, reduceEndOfTitleOffset));
+                            results.Add(new MediaHandlerResult(value, match.Index, property, rawValue, reduceEndOfTitleOffset: reduceEndOfTitleOffset, replaceIfAlreadySet: replaceIfAlreadySet));
                             continue;
                         }
 
-                        
+
                         var cleanMatch = match.Groups[1]?.Value?.Trim();
                         var matchValue = cleanMatch ?? rawValue;
 
                         if (lowercase)
                             matchValue = matchValue.ToLowerInvariant();
 
-                        results.Add(new MediaHandlerResult(matchValue, match.Index, property, rawValue, reduceEndOfTitleOffset));
+                        results.Add(new MediaHandlerResult(matchValue, match.Index, property, rawValue, reduceEndOfTitleOffset: reduceEndOfTitleOffset, replaceIfAlreadySet: replaceIfAlreadySet));
                     }
 
                 }
@@ -63,8 +63,9 @@ namespace MediaRenamer.Media.Models
         public PropertyInfo? Property { get; }
         public string RawValue { get; }
         public bool ReduceEndOfTitleOffset { get; }
+        public bool ReplaceIfAlreadySet { get; }
 
-        public MediaHandlerResult(string value, int? index, PropertyInfo? property, string rawValue, bool reduceEndOfTitleOffset = true)
+        public MediaHandlerResult(string value, int? index, PropertyInfo? property, string rawValue, bool reduceEndOfTitleOffset = true, bool replaceIfAlreadySet = false)
         {
             Value = value;
             Index = index;
@@ -72,6 +73,7 @@ namespace MediaRenamer.Media.Models
             Property = property;
             RawValue = rawValue;
             ReduceEndOfTitleOffset = reduceEndOfTitleOffset;
+            ReplaceIfAlreadySet = replaceIfAlreadySet;
         }
 
         public static MediaHandlerBuilder<T> To<T>(Expression<Func<MediaParserResult, T>> destination)
