@@ -39,8 +39,6 @@ var secretsValue = secrets.Get<AppSecrets>();
 services.Configure<AppConfig>(appConfig);
 services.Configure<AppSecrets>(secrets);
 
-Console.WriteLine(appConfigValue.MovieDestinationPath);
-
 // validation
 if (appConfigValue == null)
     return ShowError(exception: new Exception("Configuration file hasn't been provided."));
@@ -79,6 +77,7 @@ var app = new CommandApp(registrar);
 app.Configure(config =>
 {
     config.AddCommand<BatchCommand>("batch");
+    config.AddCommand<ExtractInfosCommand>("extract-infos");
 });
 
 

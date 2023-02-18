@@ -105,7 +105,7 @@
     "episode": 6,
     "quality": "HDTV",
     "codec": "x264",
-    "title": "Marvels Agents of S.H.I.E.L.D."
+    "title": "Marvels Agents of S H I E L D"
   },
   {
     "year": 2014,
@@ -203,6 +203,10 @@
   {
     "year": 2014,
     "quality": "HdRip",
+    "title": "Teenage Mutant Ninja Turtles"
+  },
+  {
+    "year": 2014,
     "title": "Teenage Mutant Ninja Turtles"
   },
   {
@@ -430,6 +434,24 @@
     "season": 4,
     "episode": 3,
     "title": "Game of Thrones"
+  },
+  {
+    "season": 5,
+    "episode": 10,
+    "resolution": "480p",
+    "quality": "BluRay",
+    "codec": "x264",
+    "website": "720pMkv.Com",
+    "title": "sons of anarchy"
+  },
+  {
+    "season": 7,
+    "episode": 7,
+    "resolution": "720p",
+    "quality": "HDTV",
+    "codec": "X264",
+    "website": "www.Speed.cd",
+    "title": "Sons of Anarchy"
   },
   {
     "season": 2,

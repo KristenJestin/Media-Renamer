@@ -1,5 +1,6 @@
 ﻿using MediaRenamer.Common.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -16,50 +17,62 @@ namespace MediaRenamer.Media.Models
             Destination = destination;
         }
 
-        public Func<string, MediaParserResult, MediaHandler> FromRegex(Regex regex, bool lowercase = false, string? value = null)
+        public Func<string, MediaParserResult, IEnumerable<MediaHandlerResult>> FromRegex(Regex regex, bool lowercase = false, string? value = null, bool reduceEndOfTitleOffset = true)
             => (name, _) =>
             {
-                var match = regex.Match(name);
-                if (match.Success)
+                var results = new List<MediaHandlerResult>();
+
+                var matches = regex.Matches(name);
+                foreach (Match match in matches)
                 {
-                    var property = Destination.GetPropertyInfo();
+                    if (match.Success)
+                    {
+                        var property = Destination.GetPropertyInfo();
+                        var rawValue = match.Value?.Trim() ?? string.Empty;
 
-                    if (!string.IsNullOrWhiteSpace(value))
-                        return new MediaHandler(value, match.Index, property);
+                        if (!string.IsNullOrWhiteSpace(value))
+                        {
+                            results.Add(new MediaHandlerResult(value, match.Index, property, rawValue, reduceEndOfTitleOffset));
+                            continue;
+                        }
 
-                    var rawMatch = match.Value?.Trim() ?? string.Empty;
-                    var cleanMatch = match.Groups[1]?.Value?.Trim();
-                    var matchValue = cleanMatch ?? rawMatch;
+                        
+                        var cleanMatch = match.Groups[1]?.Value?.Trim();
+                        var matchValue = cleanMatch ?? rawValue;
 
-                    if (lowercase)
-                        matchValue = matchValue.ToLowerInvariant();
+                        if (lowercase)
+                            matchValue = matchValue.ToLowerInvariant();
 
-                    return new MediaHandler(matchValue, match.Index, property);
+                        results.Add(new MediaHandlerResult(matchValue, match.Index, property, rawValue, reduceEndOfTitleOffset));
+                    }
+
                 }
-                return MediaHandler.NoResult();
+
+                return results;
             };
 
-        public Func<string, MediaParserResult, MediaHandler> FromFunc(Func<string, Expression<Func<MediaParserResult, TProperty>>, MediaParserResult, MediaHandler> func)
+        public Func<string, MediaParserResult, IEnumerable<MediaHandlerResult>> FromFunc(Func<string, Expression<Func<MediaParserResult, TProperty>>, MediaParserResult, IEnumerable<MediaHandlerResult>> func)
             => (name, result) => func(name, Destination, result);
     }
 
-    public class MediaHandler
+    public class MediaHandlerResult
     {
         public string? Name { get; }
         public int? Index { get; }
         public string Value { get; }
         public PropertyInfo? Property { get; }
+        public string RawValue { get; }
+        public bool ReduceEndOfTitleOffset { get; }
 
-        public MediaHandler(string value, int? index, PropertyInfo? property)
+        public MediaHandlerResult(string value, int? index, PropertyInfo? property, string rawValue, bool reduceEndOfTitleOffset = true)
         {
             Value = value;
             Index = index;
             Name = property?.Name;
             Property = property;
+            RawValue = rawValue;
+            ReduceEndOfTitleOffset = reduceEndOfTitleOffset;
         }
-
-        public static MediaHandler NoResult()
-            => new MediaHandler(string.Empty, null, null);
 
         public static MediaHandlerBuilder<T> To<T>(Expression<Func<MediaParserResult, T>> destination)
             => new MediaHandlerBuilder<T>(destination);

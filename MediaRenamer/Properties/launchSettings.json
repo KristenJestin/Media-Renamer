@@ -2,7 +2,7 @@
   "profiles": {
     "MediaRenamer": {
       "commandName": "Project",
-      "commandLineArgs": "batch --debug=false C:\\Users\\krisj\\Downloads\\test",
+      "commandLineArgs": "extract-infos \"[sekkusu&ok] ONE PUNCH MAN S2 - 01 VOSTFR-VF [Multi-Audio] [1080p]\"",
       "environmentVariables": {
         "ENVIRONMENT": "Development"
       }
