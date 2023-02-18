@@ -1,6 +1,6 @@
-﻿using FluentValidation;
+﻿using Cronos;
+using FluentValidation;
 using FluentValidation.Results;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 namespace MediaRenamer.Models;
@@ -12,6 +12,7 @@ public class AppConfig
     public bool OnlyTopDirectory { get; set; }
     public bool Overwrite { get; set; }
     public string? Langugage { get; set; }
+    public string? Cron { get; set; }
     public IEnumerable<string> DefaultMask { get; private set; } = new[] { ".avi", ".m4v", ".mp4", ".mkv", ".ts", ".wmv", ".srt", ".idx", ".sub", ".webm", ".png", ".jpg", ".jpeg" };
     public IEnumerable<string> Mask { get; set; } = Enumerable.Empty<string>();
     public Dictionary<string, string> Replacements = new()
@@ -36,6 +37,9 @@ public class AppConfig
 
     private DirectoryInfo? _tvDestination;
     public DirectoryInfo TvDestination => _tvDestination ??= new(TvDestinationPath);
+
+    private CronExpression? _cronExpression;
+    public CronExpression? CronExpression => !string.IsNullOrWhiteSpace(Cron) ? _cronExpression ??= CronExpression.Parse(Cron) : null;
 
     #region methods
     public bool TryValidate(out IEnumerable<ValidationFailure> errors)
@@ -67,14 +71,29 @@ public class AppConfigValidator : AbstractValidator<AppConfig>
             .NotEmpty().WithMessage("You must provide a path")
             .Must(Directory.Exists).WithMessage((config, path) => $"The path '{path}' doesn't exists");
 
-        When(config => config.Langugage != null, () =>
-        {
-            RuleFor(config => config.Langugage)
-                .Length(2).WithMessage("You must provide a valid Language code (with 2 char).");
-        });
+        RuleFor(config => config.Langugage)
+            .Length(2).WithMessage("You must provide a valid Language code (with 2 char).")
+            .When(config => config.Langugage != null);
+
 
         RuleForEach(config => config.Mask)
             .Matches(new Regex(@"^\.\w+$")).WithMessage((m, ext) => $"The extension '{ext}' must start with a dot (.) and have, at least, one character");
+
+        RuleFor(config => config.Cron)
+            .Must((_, cron, context) =>
+            {
+                try
+                {
+                    CronExpression.Parse(cron);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    context.MessageFormatter.AppendArgument("ExceptionMessage", ex.Message);
+                    return false;
+                }
+            }).WithMessage("The provided cron expression is not valid ({ExceptionMessage}).")
+            .When(config => !string.IsNullOrEmpty(config.Cron));
     }
 }
 

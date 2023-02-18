@@ -1,4 +1,6 @@
-﻿using Humanizer;
+﻿using Cronos;
+using Humanizer;
+using MediaRenamer.Common;
 using MediaRenamer.Common.Exceptions;
 using MediaRenamer.Media.Models;
 using MediaRenamer.Models;
@@ -51,11 +53,29 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+        if(_config.CronExpression != null)
+        {
+            var timer = new CronPeriodicTimer(_config.CronExpression);
+            while (await timer.WaitForNextTickAsync())
+                await StartRenamingAsync(settings);
+        }
+        else
+        {
+            await StartRenamingAsync(settings);
+        }
+
+        return 0;
+    }
+
+
+    #region privates
+    public async Task StartRenamingAsync(Settings settings)
+    {
         var source = new DirectoryInfo(settings.SourcePath);
 
         var medias = AnsiConsole.Status()
             .Start("Retriving files...", ctx => _fileService.GetMediaFilesFromSource(source));
-        _console.MarkupLine($"[italic cyan]{medias.Count()} files founded[/]");
+        _console.MarkupLine($"[italic cyan]{medias.Count()} files found[/]");
         _console.WriteLine();
 
         foreach (var media in medias)
@@ -97,13 +117,12 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
                     }
                     catch (FileExistsException file)
                     {
-                        _console.MarkupLine($"[red]Media '{Markup.Escape(file.FileName ?? "")}' cannot be moved because it already exists[/]");
+                        _console.MarkupLine($"[red]Media '{Markup.Escape(file.FileName ?? "")}' cannot be moved because it already exists (set {nameof(AppConfig.Overwrite)} to \"{true}\" to replace it)[/]");
                     }
 
                     _console.WriteLine();
                 });
         }
-
-        return 0;
     }
+    #endregion
 }

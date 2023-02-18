@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaRenamer", "MediaRename
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{94E82B02-E97E-4E08-814E-C1494CA0DE4D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaRename.Tests", "MediaRename.Tests\MediaRename.Tests.csproj", "{734CB6C7-8812-4E10-ACAF-AF7B12E49E09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaRenamer.Tests", "MediaRenamer.Tests\MediaRenamer.Tests.csproj", "{734CB6C7-8812-4E10-ACAF-AF7B12E49E09}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{005E2FB7-3A58-433E-A07C-1883FD48BC52}"
 EndProject
@@ -19,7 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{2CBEA677-E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaRenamer.Common", "MediaRenamer.Common\MediaRenamer.Common.csproj", "{69C4A4B3-EC0B-4798-BB8C-8C71E4A67DC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaRenamer.TvMaze", "MediaRenamer.TvMaze\MediaRenamer.TvMaze.csproj", "{5939E013-48ED-4A21-82DE-26B68238F36E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaRenamer.TvMaze", "MediaRenamer.TvMaze\MediaRenamer.TvMaze.csproj", "{5939E013-48ED-4A21-82DE-26B68238F36E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaRenamer.ML", "MediaRenamer.ML\MediaRenamer.ML.csproj", "{1584BA3A-1E93-46E6-960B-A64BC1D93F6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{5939E013-48ED-4A21-82DE-26B68238F36E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5939E013-48ED-4A21-82DE-26B68238F36E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5939E013-48ED-4A21-82DE-26B68238F36E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1584BA3A-1E93-46E6-960B-A64BC1D93F6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1584BA3A-1E93-46E6-960B-A64BC1D93F6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1584BA3A-1E93-46E6-960B-A64BC1D93F6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1584BA3A-1E93-46E6-960B-A64BC1D93F6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
