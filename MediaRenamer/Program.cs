@@ -53,7 +53,7 @@ if (!secretsValue.TryValidate(out var errorsSecrets))
     return ShowError(errors: errorsAppConfig);
 
 // Singletons
-services.AddSingleton(new TMDbClient(secretsValue.ApiKeyTMDb, language: appConfigValue.Langugage));
+services.AddSingleton(new TMDbClient(secretsValue.ApiKeyTMDb, language: appConfigValue.Language));
 services.AddSingleton(new TvMazeClient());
 services.AddSingleton<FileService>();
 services.AddSingleton<MediaService>();

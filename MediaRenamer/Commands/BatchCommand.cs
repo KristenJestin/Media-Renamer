@@ -44,7 +44,7 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
 
         public override ValidationResult Validate()
         {
-            if (!Directory.Exists(SourcePath))
+            if (SourcePath == null || !Directory.Exists(SourcePath))
                 return ValidationResult.Error("You must provide an existing source path.");
             return ValidationResult.Success();
         }

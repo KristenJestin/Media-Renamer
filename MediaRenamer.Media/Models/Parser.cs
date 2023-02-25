@@ -70,7 +70,7 @@ namespace MediaRenamer.Media.Models
             title = Regex.Replace(title, @"(^[-\. ()]+)|([-\. ]+$)", " ");
             title = Regex.Replace(title, @"[\(\)\/]", " ");
             // keep only alphanumeric
-            title = Regex.Replace(title, "[^a-zA-Z0-9-:']", " ");
+            title = Regex.Replace(title, "[^a-zA-Z0-9-:'éèàùâêîôûëïç]", " ");
             // remove double space
             title = Regex.Replace(title, @"\s+", " ");
             title = title.Trim();

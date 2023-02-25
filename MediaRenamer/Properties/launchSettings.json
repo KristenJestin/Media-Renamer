@@ -2,7 +2,7 @@
   "profiles": {
     "MediaRenamer": {
       "commandName": "Project",
-      "commandLineArgs": "extract-infos \"Wonder.Woman.1984.(2020).MULTi.VFF.IMAX.4KLight.HDR.WEB.HEVC-BATGirl\"",
+      "commandLineArgs": "extract-infos \"Pirates.des.Caraïbes.3.Jusquau.Bout.du.Monde.2007.MULTi.VFF.2160p.10bit.4KLight.HDR.WEBRip.x265.AAC.5.1\"",
       "environmentVariables": {
         "ENVIRONMENT": "Development"
       }

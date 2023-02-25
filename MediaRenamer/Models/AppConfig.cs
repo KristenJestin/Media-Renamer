@@ -11,7 +11,7 @@ public class AppConfig
     public string TvDestinationPath { get; set; } = string.Empty;
     public bool OnlyTopDirectory { get; set; }
     public bool Overwrite { get; set; }
-    public string? Langugage { get; set; }
+    public string? Language { get; set; }
     public string? Cron { get; set; }
     public IEnumerable<string> DefaultMask { get; private set; } = new[] { ".avi", ".m4v", ".mp4", ".mkv", ".ts", ".wmv", ".srt", ".idx", ".sub", ".webm", ".png", ".jpg", ".jpeg" };
     public IEnumerable<string> Mask { get; set; } = Enumerable.Empty<string>();
@@ -71,9 +71,9 @@ public class AppConfigValidator : AbstractValidator<AppConfig>
             .NotEmpty().WithMessage("You must provide a path")
             .Must(Directory.Exists).WithMessage((config, path) => $"The path '{path}' doesn't exists");
 
-        RuleFor(config => config.Langugage)
+        RuleFor(config => config.Language)
             .Length(2).WithMessage("You must provide a valid Language code (with 2 char).")
-            .When(config => config.Langugage != null);
+            .When(config => config.Language != null);
 
 
         RuleForEach(config => config.Mask)
