@@ -1,21 +1,25 @@
 ﻿using MediaRenamer.Media.Models;
+using MediaRenamer.Models;
 using MediaRenamer.TMDb.Client;
 using MediaRenamer.TMDb.Models.General;
 using MediaRenamer.TMDb.Models.Search;
 using MediaRenamer.TvMaze.Client;
 using MediaRenamer.TvMaze.Models.Search;
 using MediaRenamer.TvMaze.Models.Shows;
+using Microsoft.Extensions.Options;
 using System.Globalization;
 
 namespace MediaRenamer.Services;
 
 public class MediaService
 {
+    private readonly AppConfig _config;
     private readonly TMDbClient _tmdbClient;
     private readonly TvMazeClient _tvmazeClient;
 
-    public MediaService(TMDbClient tmdbclient, TvMazeClient tvmazeClient)
+    public MediaService(IOptions<AppConfig> config, TMDbClient tmdbclient, TvMazeClient tvmazeClient)
     {
+        _config = config.Value;
         _tmdbClient = tmdbclient;
         _tvmazeClient = tvmazeClient;
     }
@@ -36,7 +40,7 @@ public class MediaService
 
             Episode? episode = null;
 
-            var data = new MediaData(result.Name, DateTime.TryParseExact(result.Premiered, "yyyy-MM-dd", provider: null, DateTimeStyles.None, out var date) ? date : null);
+            var data = new MediaData(result.Name, DateTime.TryParseExact(result.Premiered, "yyyy-MM-dd", provider: null, DateTimeStyles.None, out var date) ? date : null, result.Id.ToString());
             if (media.ExtractedData.Season == null || media.ExtractedData.Season < 1)
             {
                 if (!media.ExtractedData.Episode.HasValue)
@@ -63,7 +67,15 @@ public class MediaService
             if (result == null)
                 return null;
 
-            return new MediaData(result.Title, result.ReleaseDate);
+            // append collection
+            string? collection = null;
+            if (_config.CollectionHasParentDirectory)
+            {
+                var details = await _tmdbClient.GetMovieAsync(result.Id);
+                collection = details.BelongsToCollection?.Name;
+            }
+
+            return new MediaData(result.Title, result.ReleaseDate, result.Id.ToString()).WithMovieInfos(collection);
         }
 
         return null;

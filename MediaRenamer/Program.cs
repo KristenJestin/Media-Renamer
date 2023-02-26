@@ -1,6 +1,7 @@
 ﻿using FluentValidation.Results;
 using Flurl.Http;
 using Flurl.Http.Configuration;
+using MediaRenamer;
 using MediaRenamer.Commands;
 using MediaRenamer.Common.Infrastructure;
 using MediaRenamer.Models;
@@ -10,11 +11,11 @@ using MediaRenamer.TvMaze.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Realms;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.Reflection;
 
-var dir = new DirectoryInfo(@"C:\Users\krisj\Downloads\test");
 var assembly = Assembly.GetEntryAssembly()!;
 
 // Create a type registrar and register any dependencies.
@@ -80,6 +81,10 @@ app.Configure(config =>
     config.AddCommand<ExtractInfosCommand>("extract-infos");
 });
 
+// database configuration
+var databaseDirectory = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(assembly.Location)!, "data"));
+databaseDirectory.Create();
+Constants.RealmConfiguration = new RealmConfiguration(Path.Combine(databaseDirectory.FullName, "data.realm"));
 
 return await app.RunAsync(args);
 

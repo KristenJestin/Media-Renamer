@@ -6,6 +6,7 @@ using MediaRenamer.Media.Models;
 using MediaRenamer.Models;
 using MediaRenamer.Services;
 using Microsoft.Extensions.Options;
+using Realms;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
@@ -22,7 +23,7 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
     private readonly FileService _fileService;
     private readonly MediaService _mediaService;
 
-    public BatchCommand(IOptions<AppConfig> config, IAnsiConsole console/*, ILogger<HelloCommand> logger*/, FileService fileService, MediaService mediaService)
+    public BatchCommand(IOptions<AppConfig> config, IAnsiConsole console, FileService fileService, MediaService mediaService)
     {
         _config = config.Value;
         _console = console;
@@ -36,11 +37,6 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
         [CommandArgument(0, "<SOURCE>")]
         public string SourcePath { get; set; }
 
-        [CommandOption("--debug")]
-        public bool? Debug { get; set; }
-
-
-
         public override ValidationResult Validate()
         {
             if (SourcePath == null || !Directory.Exists(SourcePath))
@@ -52,7 +48,7 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        if(_config.CronExpression != null)
+        if (_config.CronExpression != null)
         {
             var timer = new CronPeriodicTimer(_config.CronExpression);
             while (await timer.WaitForNextTickAsync())
@@ -79,7 +75,7 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
 
         foreach (var media in medias)
         {
-            _console.MarkupLine($"[cyan]Searching for {Markup.Escape(media.File.Name.Truncate(40, "..."))}[/]");
+            _console.MarkupLine($"[cyan]Searching for {Markup.Escape(media.File.Name.Truncate(100, "..."))}[/]");
 
             media.SetData(await _mediaService.SearchTvMovieAsync(media));
             if (media.Data == null)
@@ -108,11 +104,13 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
                     var task = ctx.AddTask($"[green]moving {Markup.Escape(moving.FileName)}[/]");
                     try
                     {
-                        if (settings.Debug != true)
-                            await _fileService.CopyFileAsync(media.File, moving, onProgressChanged: (progress, _) => task.Value = progress, overwrite: _config.Overwrite);
-                        _console.MarkupLine($"[bold green] == Moved has '{Markup.Escape(moving.FileName.Truncate(40, "..."))}'[/]");
-                        if (settings.Debug != true)
-                            media.File.Delete();
+                        await _fileService.CopyFileAsync(media.File, moving, onProgressChanged: (progress, _) => task.Value = progress, overwrite: _config.Overwrite);
+                        _console.MarkupLine($"[bold green] == Moved has '{Markup.Escape(moving.FileName.Truncate(100, "..."))}'[/]");
+                        media.File.Delete();
+
+                        // save history
+                        using var realm = Realm.GetInstance(Constants.RealmConfiguration);
+                        await realm.WriteAsync(() => realm.Add(new MovingHistory(media, moving)));
                     }
                     catch (FileExistsException file)
                     {

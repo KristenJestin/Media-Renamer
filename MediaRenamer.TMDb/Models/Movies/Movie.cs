@@ -21,7 +21,7 @@ namespace MediaRenamer.TMDb.Models.Movies
 		public string BackdropPath { get; set; }
 
 		[JsonProperty("belongs_to_collection")]
-		public SearchCollection BelongsToCollection { get; set; }
+		public SearchCollection? BelongsToCollection { get; set; }
 
 		[JsonProperty("budget")]
 		public long Budget { get; set; }

@@ -89,7 +89,10 @@ public class FileService
         if (media.Data.ReleaseDate.HasValue)
             fileName += $" ({media.Data.ReleaseDate:yyyy})";
 
-        return new MediaMoving(_config.MovieDestination, fileName);
+        var collection = BetterNamingAndApplyReplacements(media.Data.Collection?.Replace("Collection", ""));
+
+        return new MediaMoving(_config.MovieDestination, fileName)
+            .WithExtraPaths(collection);
     }
 
     private MediaMoving RenameTv(MediaFile media)
@@ -100,11 +103,15 @@ public class FileService
         var episode = BetterNamingAndApplyReplacements(media.Data.EpisodeTitle!);
         var fileName = $"{tv} - S{media.Data.Season:d2}E{media.Data.Episode:d2} - {episode}";
 
-        return new MediaMoving(_config.TvDestination, fileName, new[] { tv + tvDate, season });
+        return new MediaMoving(_config.TvDestination, fileName)
+            .WithExtraPaths(tv + tvDate, season);
     }
 
-    private string BetterNamingAndApplyReplacements(string fileName)
+    private string BetterNamingAndApplyReplacements(string? fileName)
     {
+        if(string.IsNullOrEmpty(fileName))
+            return string.Empty;
+
         var result = fileName;
 
         // remove old invalid char if any are left
@@ -114,7 +121,7 @@ public class FileService
         // remove double space
         result = Regex.Replace(result, @"\s+", " ");
 
-        return result;
+        return result.Trim();
     }
     #endregion
 }

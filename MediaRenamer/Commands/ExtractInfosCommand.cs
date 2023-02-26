@@ -20,15 +20,17 @@ using Newtonsoft.Json.Converters;
 
 namespace MediaRenamer.Commands;
 
-public sealed class ExtractInfosCommand : Command<ExtractInfosCommand.Settings>
+public sealed class ExtractInfosCommand : AsyncCommand<ExtractInfosCommand.Settings>
 {
     private readonly AppConfig _config;
     private readonly IAnsiConsole _console;
+    private readonly MediaService _mediaService;
 
-    public ExtractInfosCommand(IOptions<AppConfig> config, IAnsiConsole console)
+    public ExtractInfosCommand(IOptions<AppConfig> config, IAnsiConsole console, MediaService mediaService)
     {
         _config = config.Value;
         _console = console;
+        _mediaService = mediaService;
     }
 
     public sealed class Settings : CommandSettings
@@ -48,9 +50,11 @@ public sealed class ExtractInfosCommand : Command<ExtractInfosCommand.Settings>
     }
 
 
-    public override int Execute(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         var media = new MediaFile(new FileInfo(settings.FileName + ".mkv"), _config.BeforeReplacements);
+        media.SetData(await _mediaService.SearchTvMovieAsync(media));
+
         var json = new JsonText(JsonConvert.SerializeObject(media.ExtractedData, Formatting.Indented, new StringEnumConverter()));
 
         _console.Write(new Panel(json)

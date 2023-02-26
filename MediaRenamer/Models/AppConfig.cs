@@ -11,6 +11,7 @@ public class AppConfig
     public string TvDestinationPath { get; set; } = string.Empty;
     public bool OnlyTopDirectory { get; set; }
     public bool Overwrite { get; set; }
+    public bool CollectionHasParentDirectory { get; set; }
     public string? Language { get; set; }
     public string? Cron { get; set; }
     public IEnumerable<string> DefaultMask { get; private set; } = new[] { ".avi", ".m4v", ".mp4", ".mkv", ".ts", ".wmv", ".srt", ".idx", ".sub", ".webm", ".png", ".jpg", ".jpeg" };
