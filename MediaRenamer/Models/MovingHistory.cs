@@ -21,6 +21,8 @@ public class MovingHistory : RealmObject
     public string DestinationFilename { get; set; }
 
     public string? ExternalId { get; set; }
+    public string MediaType { get; set; }
+
     public string ExtractedData { get; set; }
 
     public MovingHistory() { }
@@ -33,6 +35,7 @@ public class MovingHistory : RealmObject
         DestinationFilename = moving.FileName + media.File.GetExtension();
         ExtractedData = JsonConvert.SerializeObject(media.ExtractedData);
         ExternalId = media.Data?.ExternalId;
+        MediaType = media.ExtractedData.Type.ToString();
     }
 
 
