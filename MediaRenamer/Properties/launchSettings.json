@@ -2,7 +2,7 @@
   "profiles": {
     "MediaRenamer": {
       "commandName": "Project",
-      "commandLineArgs": "extract-infos \"Pirates.des.Caraïbes.3.Jusquau.Bout.du.Monde.2007.MULTi.VFF.2160p.10bit.4KLight.HDR.WEBRip.x265.AAC.5.1\"",
+      "commandLineArgs": "extract-infos \"Fast & Furious 1. (2001).MULTi.VF2.2160p.10bit.4KLight.HDR10.BluRay.x265.AC3.5.1.Portos\"",
       "environmentVariables": {
         "ENVIRONMENT": "Development"
       }

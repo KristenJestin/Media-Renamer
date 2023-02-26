@@ -15,7 +15,7 @@ public class AppConfig
     public string? Cron { get; set; }
     public IEnumerable<string> DefaultMask { get; private set; } = new[] { ".avi", ".m4v", ".mp4", ".mkv", ".ts", ".wmv", ".srt", ".idx", ".sub", ".webm", ".png", ".jpg", ".jpeg" };
     public IEnumerable<string> Mask { get; set; } = Enumerable.Empty<string>();
-    public Dictionary<string, string> Replacements = new()
+    public Dictionary<string, string> BeforeReplacements { get; } = new()
     {
         { "&", "and" },
         { ";", "," },

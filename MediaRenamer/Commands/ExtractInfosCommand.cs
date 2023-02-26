@@ -22,6 +22,15 @@ namespace MediaRenamer.Commands;
 
 public sealed class ExtractInfosCommand : Command<ExtractInfosCommand.Settings>
 {
+    private readonly AppConfig _config;
+    private readonly IAnsiConsole _console;
+
+    public ExtractInfosCommand(IOptions<AppConfig> config, IAnsiConsole console)
+    {
+        _config = config.Value;
+        _console = console;
+    }
+
     public sealed class Settings : CommandSettings
     {
         [Description("filename to extract data")]
@@ -41,10 +50,10 @@ public sealed class ExtractInfosCommand : Command<ExtractInfosCommand.Settings>
 
     public override int Execute(CommandContext context, Settings settings)
     {
-        var data = MediaParser.Default.Parse(settings.FileName);
-        var json = new JsonText(JsonConvert.SerializeObject(data, Formatting.Indented, new StringEnumConverter()));
+        var media = new MediaFile(new FileInfo(settings.FileName + ".mkv"), _config.BeforeReplacements);
+        var json = new JsonText(JsonConvert.SerializeObject(media.ExtractedData, Formatting.Indented, new StringEnumConverter()));
 
-        AnsiConsole.Write(new Panel(json)
+        _console.Write(new Panel(json)
             .Collapse()
             .RoundedBorder()
             .BorderColor(Color.Yellow));

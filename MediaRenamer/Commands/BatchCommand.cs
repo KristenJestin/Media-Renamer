@@ -17,7 +17,6 @@ namespace MediaRenamer.Commands;
 
 public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
 {
-    //private readonly ILogger<HelloCommand> _logger;
     private readonly AppConfig _config;
     private readonly IAnsiConsole _console;
     private readonly FileService _fileService;

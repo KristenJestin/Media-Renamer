@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace MediaRenamer.Media.Models
 {
@@ -8,10 +9,15 @@ namespace MediaRenamer.Media.Models
         public MediaParserResult ExtractedData { get; }
         public MediaData? Data { get; private set; }
 
-        public MediaFile(FileInfo file)
+        public MediaFile(FileInfo file, Dictionary<string, string> replacements)
         {
             File = file;
+
             var name = file.Name;
+            // replace by user (or default config) data
+            foreach (var replacement in replacements)
+                name = name.Replace(replacement.Key, replacement.Value);
+
             ExtractedData = MediaParser.Default.Parse(name);
         }
 
@@ -19,11 +25,6 @@ namespace MediaRenamer.Media.Models
         #region methods
         public void SetData(MediaData? data)
             => Data = data;
-        #endregion
-
-        #region statics
-        public static MediaFile Create(FileInfo file)
-            => new MediaFile(file);
         #endregion
     }
 }

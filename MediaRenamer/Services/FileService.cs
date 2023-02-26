@@ -27,7 +27,7 @@ public class FileService
             .EnumerateFiles("*.*", _config.OnlyTopDirectory ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories)
             .Where(file => _config.GetMask().Contains(file.Extension));
 
-        return files.Select(MediaFile.Create);
+        return files.Select((file) => new MediaFile(file, _config.BeforeReplacements));
     }
 
     public MediaMoving BuildMovingMedia(MediaFile media)
@@ -106,10 +106,6 @@ public class FileService
     private string BetterNamingAndApplyReplacements(string fileName)
     {
         var result = fileName;
-
-        // replace by user (or default config) data
-        foreach (var replacement in _config.Replacements)
-            result = result.Replace(replacement.Key, replacement.Value);
 
         // remove old invalid char if any are left
         foreach (var character in Path.GetInvalidFileNameChars())
