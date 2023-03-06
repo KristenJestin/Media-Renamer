@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaRenamer.Common", "Medi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaRenamer.TvMaze", "MediaRenamer.TvMaze\MediaRenamer.TvMaze.csproj", "{5939E013-48ED-4A21-82DE-26B68238F36E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaCatcher", "MediaCatcher\MediaCatcher.csproj", "{FC779714-D7F5-4D75-9873-A5EBF86A020A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{5939E013-48ED-4A21-82DE-26B68238F36E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5939E013-48ED-4A21-82DE-26B68238F36E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5939E013-48ED-4A21-82DE-26B68238F36E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC779714-D7F5-4D75-9873-A5EBF86A020A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC779714-D7F5-4D75-9873-A5EBF86A020A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC779714-D7F5-4D75-9873-A5EBF86A020A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC779714-D7F5-4D75-9873-A5EBF86A020A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

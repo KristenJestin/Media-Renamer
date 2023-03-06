@@ -89,7 +89,7 @@ public class FileService
         if (media.Data.ReleaseDate.HasValue)
             fileName += $" ({media.Data.ReleaseDate:yyyy})";
 
-        var collection = BetterNamingAndApplyReplacements(media.Data.Collection?.Replace("Collection", ""));
+        var collection = BetterNamingAndApplyReplacements(media.Data.Collection?.Name.Replace("Collection", ""));
 
         return new MediaMoving(_config.MovieDestination, fileName)
             .WithExtraPaths(collection);

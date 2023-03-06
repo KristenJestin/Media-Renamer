@@ -40,7 +40,7 @@ public class MediaService
 
             Episode? episode = null;
 
-            var data = new MediaData(result.Name, DateTime.TryParseExact(result.Premiered, "yyyy-MM-dd", provider: null, DateTimeStyles.None, out var date) ? date : null, result.Id.ToString());
+            var data = new MediaData(result.Name, DateTime.TryParseExact(result.Premiered, "yyyy-MM-dd", provider: null, DateTimeStyles.None, out var date) ? date : null, result.Id.ToString(), "tvmaze");
             if (media.ExtractedData.Season == null || media.ExtractedData.Season < 1)
             {
                 if (!media.ExtractedData.Episode.HasValue)
@@ -67,15 +67,19 @@ public class MediaService
             if (result == null)
                 return null;
 
+            var data = new MediaData(result.Title, result.ReleaseDate, result.Id.ToString(), "tmdb");
+
             // append collection
-            string? collection = null;
             if (_config.CollectionHasParentDirectory)
             {
                 var details = await _tmdbClient.GetMovieAsync(result.Id);
-                collection = details.BelongsToCollection?.Name;
+                var collection = details.BelongsToCollection;
+
+                if (collection != null)
+                    data.WithMovieInfos(collection.Id.ToString(), collection.Name, collection.PosterPath);
             }
 
-            return new MediaData(result.Title, result.ReleaseDate, result.Id.ToString()).WithMovieInfos(collection);
+            return data;
         }
 
         return null;

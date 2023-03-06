@@ -68,7 +68,7 @@ public sealed class BatchCommand : AsyncCommand<BatchCommand.Settings>
     {
         var source = new DirectoryInfo(settings.SourcePath);
 
-        var medias = AnsiConsole.Status()
+        var medias = _console.Status()
             .Start("Retriving files...", ctx => _fileService.GetMediaFilesFromSource(source));
         _console.MarkupLine($"[italic cyan]{medias.Count()} files found[/]");
         _console.WriteLine();
