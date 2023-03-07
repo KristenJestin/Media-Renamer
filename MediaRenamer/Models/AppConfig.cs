@@ -18,7 +18,6 @@ public class AppConfig
     public IEnumerable<string> Mask { get; set; } = Enumerable.Empty<string>();
     public Dictionary<string, string> BeforeReplacements { get; } = new()
     {
-        { "&", "and" },
         { ";", "," },
         { "@", "at" },
         { "*", "x" },
